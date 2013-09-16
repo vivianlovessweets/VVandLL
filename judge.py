@@ -1,6 +1,7 @@
 import sys
 import time
 import os
+import md5
 
 # result list to be judged
 resultList = []
@@ -15,30 +16,20 @@ TARGET_FILE = "output.txt"
 # current dir
 prefix = os.path.abspath(os.curdir) + '\\'
 
-def readFileToList(fileName, list):
-	f = file(fileName)
-	while True:
-		line = f.readline()
-		if len(line) == 0:
-			break
-	f.close()
-
-def compareLists():
-	rlen = len(resultList)
-	tlen = len(targetList)
-	if rlen != tlen:
-		print 'number of outputs invalid'
-		sys.exit()
-	for i in range(0, rlen):
-		if resultList[i] != targetList[i]:
-			print 'WA'
-			sys.exit()
-	print 'AC'
+def compareFile(fa, fb):
+	filea = open(fa, 'r')
+	fileb = open(fb, 'r')
+	
+	keya = md5.new(filea.read()).hexdigest()
+	keyb = md5.new(fileb.read()).hexdigest()
+	
+	if keya == keyb:
+		print "AC"
+	else:
+		print "WA"
 
 def judgeResult():
-	readFileToList(prefix + RESULT_FILE, resultList)
-	readFileToList(prefix + TARGET_FILE, targetList)
-	compareLists()
+	compareFile(prefix + RESULT_FILE, prefix + TARGET_FILE)
 
 def main():
 	if len(sys.argv) < 2:
